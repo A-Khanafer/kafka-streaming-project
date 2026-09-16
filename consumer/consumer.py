@@ -1,0 +1,1 @@
+#Consumer will read events from Kafka.
