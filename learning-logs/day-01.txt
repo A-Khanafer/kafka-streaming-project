@@ -55,3 +55,12 @@ Made sure everything was running correctly and then I created a topic inside Kaf
     docker exec broker /opt/kafka/bin/kafka-topics.sh \
      --list \
      --bootstrap-server localhost:9092
+
+Ran : git init #Initialize the git repo.
+      git add . #Adds every file into the staged changes
+      git commit -m "Initial Kafka project setup" #Commits to git -m is for a message
+
+      #Create and empty github project and connect it
+      git branch -M main 
+      git remote add origin https://github.com/A-Khanafer/kafka-streaming-project.git
+      git push -u origin main 
