@@ -1,0 +1,4 @@
+interface:
+  display_name: "Format Learning Logs"
+  short_description: "Preserve log text while formatting it"
+  default_prompt: "Use $format-learning-logs to convert the project's learning logs to Markdown without altering their wording."

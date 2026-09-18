@@ -3,43 +3,57 @@ Yes I like to talk with 'we' because the best way to learn something is by succe
 I started by adding a venv which is a virtual environment. It let's me install python packages for projects.
 Basically it isolates them, so that I don't have to install on my computer all the libraries.
 
+```
 python3 -m venv .venv #Creates the environment
 source .venv/bin/activate #Activates the environment (Tells the terminal to use that environment)
+```
 
-We switch from using python to pip.
-After that I can then install kafka library with : pip install confluent_kafka and verify that it installed with pip show confluent_kafka.
+We switch from using `python` to `pip`.
+After that I can then install kafka library with : `pip install confluent_kafka` and verify that it installed with `pip show confluent_kafka`.
 
-I finally started to write some simple code in producer.py.
+## I finally started to write some simple code in `producer.py`.
 
 What I tried is creating a producer and sending a message to the topic we previously manually created.
-(I suggest before reading that part you go and look at producer.py's code.)
+(I suggest before reading that part you go and look at `producer.py`'s code.)
 
-So producer = Producer({"bootstrap.servers" : "localhost:9092"})
+So
+
+```python
+producer = Producer({"bootstrap.servers" : "localhost:9092"})
+```
+
     bootstrap.servers is basically asking "Where can I find at least one Kafka broker so I can connect to the Kafka cluster?"
     In our case, I exposed Kafka port 9092. So we use localhost:9092. And remember why are we using localhost and that specific port?
     It's because we contacting Kafka from outside the Container.
 
 Then we queued the message to the topic we created during day-01 (network-events).
+
+```python
     producer.produce(
         topic="network-events",
         value="hellows kafka"   
     )
+```
 
-And we flushed with : producer.flush() since Kafka Producers work Asynchronously.
+And we flushed with : `producer.flush()` since Kafka Producers work Asynchronously.
 
 Now I ran the program and everything was good! 
 But I wanted to verify so I ran this command in my terminal...
+
+```
     docker compose exec broker /opt/kafka/bin/kafka-console-consumer.sh   
         --bootstrap-server localhost:29092    
         --topic network-events   
         --from-beginning
+```
 
 And I got a lot of error messages... But the mistake was not my code neither Kafka it was what I wrote in my command.
 
-As you should remember I contacted Kafka via localhost:29092, but that's the problem remember what we called our service?
-Yes, broker.
-And since we are communicating internally with Kafka I should've used broker:29092.
+As you should remember I contacted Kafka via `localhost:29092`, but that's the problem remember what we called our service?
+Yes, `broker`.
+And since we are communicating internally with Kafka I should've used `broker:29092`.
 
+```text
                             Our Python program
                                     |
                                     | localhost:9092
@@ -57,14 +71,14 @@ And since we are communicating internally with Kafka I should've used broker:290
                                     | broker:29092
                                     |
                             Docker-side Kafka client
+```
 
 
 Retried it with the right command and got confirmation that my message was indeed inside topic 'network-events'.
 
-Now I also wanted to point out that whn we do producer.produce(topic="order", value="a random message"). If the Topic is non-existing in Kafka, it is supposed to auto-create that topic by default.
-We can change that by editing our docker-compose.yml by adding an environment variable called KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true".
+Now I also wanted to point out that whn we do `producer.produce(topic="order", value="a random message")`. If the Topic is non-existing in Kafka, it is supposed to auto-create that topic by default.
+We can change that by editing our `docker-compose.yml` by adding an environment variable called `KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"`.
 
 Here you go this is what I learned while implementing the producer. Even though I already have some good knowledge about certain topic like git, python, docker, ect...
 I feel like it's nice to just type everything out as if I am explaining to someone. It might help someone!
-
 
