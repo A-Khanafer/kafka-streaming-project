@@ -37,15 +37,22 @@ try:
         if msg.error():
             print(f"Consumer Error: {msg.error()}")
             continue
+
         # There's quite a lot happening on this one line.
         # msg.value() gets the Kafka message payload.
         # We .decode("utf-8") the message since we might receive it in bytes.
         # and finally json.loads() transforms it into a Python object
-        # Usually in our case it will a dictionary.
-        #event = json.loads(msg.value().decode("utf-8")) CAN'T USE json.loads() on a str...
-        event = msg.value().decode("utf-8")
+        # In our case it is a dictionary.
+        event = json.loads(msg.value().decode(encoding="utf-8"))
 
-        print(event)
+        print("Received event:")
+        print("Device: " + event["device_id"])
+        print("Event Type: " + event["event_type"])
+        print("Interface: " +event["interface"])
+        print("\nKafka:")
+        print("Topic: " + msg.topic())
+        print("Partition: " + str(msg.partition()))
+        print("Offset: " + str(msg.offset()))
 
 finally:
     # This properly shuts down the Kafka consumer.
