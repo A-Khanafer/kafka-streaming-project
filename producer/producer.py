@@ -19,6 +19,7 @@ event = {
 
 #Transform the python dict into a json str and encode it into bytes
 event_in_bytes = json.dumps(event).encode(encoding="utf-8")
+# malformed_event = b'{"event_type": "Interface DOWN", "device_id": "SRX-4600", "status": DOWN}'
 
 # Sends our event in bytes to the Kafka topic we created earlier "network-events".
 producer.produce(

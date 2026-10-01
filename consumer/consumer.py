@@ -43,16 +43,24 @@ try:
         # We .decode("utf-8") the message since we might receive it in bytes.
         # and finally json.loads() transforms it into a Python object
         # In our case it is a dictionary.
-        event = json.loads(msg.value().decode(encoding="utf-8"))
+        try:
+            event = json.loads(msg.value().decode(encoding="utf-8"))
 
-        print("Received event:")
-        print("Device: " + event["device_id"])
-        print("Event Type: " + event["event_type"])
-        print("Interface: " +event["interface"])
-        print("\nKafka:")
-        print("Topic: " + msg.topic())
-        print("Partition: " + str(msg.partition()))
-        print("Offset: " + str(msg.offset()))
+            print("Received event:")
+            print("Device: " + event["device_id"])
+            print("Event Type: " + event["event_type"])
+            print("Interface: " +event["interface"])
+            print("\nKafka:")
+            print("Topic: " + msg.topic())
+            print("Partition: " + str(msg.partition()))
+            print("Offset: " + str(msg.offset()))
+
+        except json.JSONDecodeError as e:
+            print(f"Malformed JSON at partition {msg.partition()}, offset {msg.offset()}: {e}")
+            continue
+        
+
+
 
 finally:
     # This properly shuts down the Kafka consumer.
